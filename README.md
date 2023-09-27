@@ -4,10 +4,10 @@ Format + write + zz
 
 ## Functionalities
 
-- [ ] Allow user to manually specify formatter on a filetype basis
+- [x] Allow user to manually specify formatter on a filetype basis
 - [ ] Alternative, use sensible presets provided
-- [ ] Provides a module for quick format
-- [ ] Provides a command for quick format
+- [x] Provides a module for quick format
+- [x] Provides command `:QFormat`
 
 ## Won't do
 
