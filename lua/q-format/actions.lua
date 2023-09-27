@@ -18,21 +18,15 @@ end
 
 ---@param win win-id
 ---@param formatters table<ft, formatter>
-local q = function (formatters, win)
+---@param opts opts
+local q = function (formatters, win, opts)
     local prev_pos = vim.api.nvim_win_get_cursor(win)
     local buf = vim.api.nvim_win_get_buf(win)
-    local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
-    if ft == '' then
-        error '[q-format] cannot determine filetype'
-   end
-
-    -- retrive content
-    local content = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), '\n')
 
     -- do the formatting
     -- any error araised by formatting will stop here
     local format = require 'q-format.format'
-    local formatted = format(formatters, ft, content)
+    local formatted = format(formatters, buf, opts)
 
     -- put it back
     local L = require 'q-format.lib'
@@ -50,10 +44,14 @@ end
 
 local M = {}
 
+-- setup function q_format() in the given table.
 ---@param m table
-M.setup_q_format = function (m, formatters, win_supplier)
+---@param formatters formatters
+---@param win_supplier fun(): win-id
+---@param opts opts
+M.setup_q_format = function (m, formatters, win_supplier, opts)
     m.q_format = function ()
-        q(formatters, win_supplier())
+        q(formatters, win_supplier(), opts)
     end
 end
 

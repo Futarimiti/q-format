@@ -1,4 +1,4 @@
----@alias formatter fun(content: string): string
+---@alias formatter (fun(content: string): string)
 ---@alias user-formatter string | formatter
 ---@alias formatters table<ft, formatter>
 ---@alias user-formatters table<ft, user-formatter>
@@ -65,7 +65,8 @@ end
 ---@param users user-formatters
 ---@return formatters
 M.from_users = function (users)
-    return vim.tbl_map(M.from_user, users)
+    local manual = vim.tbl_map(M.from_user, users)
+    return manual
 end
 
 return M
