@@ -2,7 +2,8 @@
 -- use_fp: should we use fp for a filetype if its formatter is not given?
 -- 'fp' -> use fp if formatter absent
 -- false -> use neither
----@alias options { use_fp?: fp_option }
+-- silent: should I remain silent if formatter not found?
+---@alias options { use_fp?: fp_option, silent?: boolean }
 ---@alias user-opts { formatters?: user-formatters, opts?: options }
 ---@alias opts { formatters: user-formatters, opts: options }
 
@@ -17,7 +18,10 @@ M.get_user_formatters = function (opts)
 end
 
 ---@type opts
-M.default_user_opts = { formatters = {}, opts = { use_fp = 'fp' } }
+M.default_user_opts = { formatters = {}, opts = { use_fp = 'fp'
+                                                , silent = false
+                                                }
+                      }
 
 ---@param user user-opts
 ---@return opts

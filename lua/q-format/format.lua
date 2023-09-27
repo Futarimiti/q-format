@@ -12,19 +12,24 @@ return function (formatters, buf, opts)
         error '[q-format] cannot determine filetype'
     end
 
-    local formatter = formatters[ft]
-    if formatter == nil then
-        if opts.use_fp then
-            local fp = vim.bo[buf].formatprg
-            if fp == '' then
-                error('[q-format] no formatter found for filetype: ' .. ft)
-            end
+    ---@type formatter
+    local formatter = (function ()
+        local designated = formatters[ft]
+        if designated ~= nil then
+            return designated
+        end
 
-            formatter = require('q-format.formatters').from_user(fp)
+        local fp = vim.bo[buf].formatprg
+        if opts.use_fp and fp ~= '' then
+            return require('q-format.formatters').from_user(fp)
+        elseif opts.silent then
+            -- do nothing
+            local as_is = function (cont) return cont end
+            return as_is
         else
             error('[q-format] no formatter found for filetype: ' .. ft)
         end
-    end
+    end)()
 
     local ok, result = pcall(formatter, content)
 
