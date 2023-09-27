@@ -18,9 +18,10 @@ M.get_user_formatters = function (opts)
 end
 
 ---@type opts
-M.default_user_opts = { formatters = {}, opts = { use_fp = 'fp'
-                                                , silent = false
-                                                }
+M.default_user_opts = { formatters = {}
+                      , opts = { use_fp = 'fp'
+                               , silent = false
+                               }
                       }
 
 ---@param user user-opts
