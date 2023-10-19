@@ -20,7 +20,7 @@ end
 ---@param formatters table<ft, formatter>
 ---@param opts opts
 local q = function (formatters, win, opts)
-    local prev_pos = vim.api.nvim_win_get_cursor(win)
+    local prev_row, prev_col = unpack(vim.api.nvim_win_get_cursor(win))
     local buf = vim.api.nvim_win_get_buf(win)
 
     -- do the formatting
@@ -30,10 +30,14 @@ local q = function (formatters, win, opts)
 
     -- put it back
     local L = require 'q-format.lib'
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, L.lines(formatted))
+    local lines = L.lines(formatted)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
-    -- restore cursor
-    vim.api.nvim_win_set_cursor(win, prev_pos)
+    -- restore cursor.
+    -- the line cursor was on may be deleted;
+    -- in that case, put it on the last line
+    print('prev_row: ' .. tostring(prev_row) .. ' #formatted: ' .. tostring(#lines))
+    vim.api.nvim_win_set_cursor(win, { math.min(prev_row, #lines), prev_col })
 
     -- zz
     zz(buf)
