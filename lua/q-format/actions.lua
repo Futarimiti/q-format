@@ -36,7 +36,6 @@ local q = function (formatters, win, opts)
     -- restore cursor.
     -- the line cursor was on may be deleted;
     -- in that case, put it on the last line
-    print('prev_row: ' .. tostring(prev_row) .. ' #formatted: ' .. tostring(#lines))
     vim.api.nvim_win_set_cursor(win, { math.min(prev_row, #lines), prev_col })
 
     -- zz
