@@ -9,7 +9,12 @@ return function (formatters, buf, opts)
     local content = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), '\n')
     local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
     if ft == '' then
-        error '[q-format] cannot determine filetype'
+        if opts.silent then
+            -- do nothing
+            return content
+        else
+            error '[q-format] cannot determine filetype'
+        end
     end
 
     ---@type formatter
