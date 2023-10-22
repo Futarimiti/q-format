@@ -23,7 +23,7 @@ end
 -- NOTE: cursor position will be changed
 M.gq = function (buf)
   local cmd = function ()
-    vim.api.nvim_cmd({ cmd = 'normal', args = { 'zz' }, bang = true, mods = { silent = true } }, {})
+    vim.api.nvim_cmd({ cmd = 'normal', args = { 'ggVGgq' }, bang = true, mods = { silent = true } }, {})
   end
   vim.api.nvim_buf_call(buf, cmd)
 end
@@ -33,11 +33,21 @@ end
 M.cursor = function (win, pos)
   local buf = vim.api.nvim_win_get_buf(win)
   local row, col = unpack(pos)
-  local dest_row = math.min(row, vim.api.nvim_buf_line_count(win))
+  local dest_row = math.min(row, vim.api.nvim_buf_line_count(buf))
   local line = vim.api.nvim_buf_get_lines(buf, dest_row - 1, dest_row, false)[1] or ''
   local dest_col = math.min(col, #line)
-  local cmd = function () vim.api.nvim_win_set_cursor(0, { dest_row, dest_col }) end
-  vim.api.nvim_buf_call(win, cmd)
+  vim.api.nvim_win_set_cursor(0, { dest_row, dest_col })
+end
+
+M.get_cursor = function (win)
+  return vim.api.nvim_win_get_cursor(win)
+end
+
+M.with_cursor_in_place = function (win, f)
+  local pos = M.get_cursor(win)
+  local successful, errmsg = pcall(f)
+  M.cursor(win, pos)
+  if not successful then error(errmsg) end
 end
 
 -- copy contents from one buffer to another
