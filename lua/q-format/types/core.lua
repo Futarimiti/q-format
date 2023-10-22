@@ -1,1 +1,0 @@
----@alias win-id integer
