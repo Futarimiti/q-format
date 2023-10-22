@@ -10,6 +10,7 @@ end
 -- - upon reformatting errors, the error message will be regarded as the result
 -- - cursor position will be changed and you will immediately lose the focus
 -- - buffer is modified
+-- - no one likes 'internal fmt'
 --
 -- here's an improved version that handle things more properly:
 -- the buffer content will be first backup to a temporary buffer
@@ -25,14 +26,18 @@ M.format = function (_user, win)
 
   a.with_cursor_in_place(win, function ()
     a.with_tempbuf(function (tempbuf)
-      a.bufcopy(buf, tempbuf)
-      a.gq(buf)
-      if shell_error() then
-        local errmsg = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), '\n')
-        a.bufcopy(tempbuf, buf)
-        vim.notify('[q-format] format error:\n' .. errmsg, vim.log.levels.ERROR)
-      else
-        a.update(buf)
+      local formatprg = vim.api.nvim_buf_get_option(buf, 'formatprg')
+      local formatexpr = vim.api.nvim_buf_get_option(buf, 'formatexpr')
+      if formatexpr ~= '' or formatprg ~= ''then
+        a.bufcopy(buf, tempbuf)
+        a.gq(buf)
+        if shell_error() then
+          local errmsg = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), '\n')
+          a.bufcopy(tempbuf, buf)
+          vim.notify('[q-format] format error:\n' .. errmsg, vim.log.levels.ERROR)
+        else
+          a.update(buf)
+        end
       end
     end)
   end)
