@@ -46,4 +46,17 @@ M.bufcopy = function (from_buf, to_buf)
   vim.api.nvim_buf_set_lines(to_buf, 0, -1, false, contents)
 end
 
+-- cps
+M.with_tempbuf = function (f)
+  local tempbuf = vim.api.nvim_create_buf(false, true)
+  local successful, errmsg = pcall(f, tempbuf)
+
+  if vim.api.nvim_buf_is_valid(tempbuf) then
+    vim.api.nvim_buf_delete(tempbuf, { force = true })
+  end
+
+  -- rethrow error
+  if not successful then error(errmsg) end
+end
+
 return M
