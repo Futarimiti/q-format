@@ -1,5 +1,7 @@
 local typecheck = function (config)
-  vim.validate {}
+  vim.validate
+  { config = { config, 'table' }
+  }
 end
 
 local defaults = {}
