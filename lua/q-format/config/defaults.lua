@@ -11,7 +11,7 @@ local e = require 'q-format.formatters'
 
 local defaults =
 { custom = {}  -- custom formatters, in the format that you would pass to formatprg
-, preferences = { ['*'] = { e.CUSTOM, e.FORMATPRG, e.FORMATEXPR } }  -- preferences of formatters for each filetype
+, preferences = { ['*'] = { e.CUSTOM, e.FORMATEXPR, e.FORMATPRG } }  -- preferences of formatters for each filetype
 }
 
 assert(pcall(typecheck, defaults))
