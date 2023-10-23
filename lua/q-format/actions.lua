@@ -2,17 +2,19 @@
 
 local M = {}
 
-M.zz = function (buf)
-  local cmd = function ()
-    vim.api.nvim_cmd({ cmd = 'normal', args = { 'zz' }, bang = true, mods = { silent = true } }, {})
+local normal = function (keys)
+  return function ()
+    vim.api.nvim_cmd({ cmd = 'normal', args = { keys }, bang = true, mods = { silent = true } }, {})
   end
+end
+
+M.zz = function (buf)
+  local cmd = normal 'zz'
   vim.api.nvim_buf_call(buf, cmd)
 end
 
 M.update = function (buf)
-  local cmd = function ()
-    vim.api.nvim_cmd({ cmd = 'update', mods = { silent = true } }, {})
-  end
+  local cmd = normal 'update'
   local successful, errmsg = pcall(vim.api.nvim_buf_call, buf, cmd)
   if not successful then
     error('[q-format] Cannot write buffer ' .. tostring(buf) .. ': ' .. errmsg)
@@ -22,9 +24,13 @@ end
 -- normal! gq for the whole buffer
 -- NOTE: cursor position will be changed
 M.gq = function (buf)
-  local cmd = function ()
-    vim.api.nvim_cmd({ cmd = 'normal', args = { 'ggVGgq' }, bang = true, mods = { silent = true } }, {})
-  end
+  local cmd = normal 'gggqG'
+  vim.api.nvim_buf_call(buf, cmd)
+end
+
+-- normal! = for the whole buffer
+M.eq = function (buf)
+  local cmd = normal 'gg=G'
   vim.api.nvim_buf_call(buf, cmd)
 end
 
