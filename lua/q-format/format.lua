@@ -28,7 +28,7 @@ M.format = function (_user, win)
     a.with_tempbuf(function (tempbuf)
       local formatprg = vim.api.nvim_buf_get_option(buf, 'formatprg')
       local formatexpr = vim.api.nvim_buf_get_option(buf, 'formatexpr')
-      if formatexpr ~= '' or formatprg ~= ''then
+      if formatexpr ~= '' or formatprg ~= '' then
         a.bufcopy(buf, tempbuf)
         a.gq(buf)
         if shell_error() then
