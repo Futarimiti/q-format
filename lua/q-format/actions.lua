@@ -8,6 +8,18 @@ local normal = function (keys)
   end
 end
 
+M.contents = function (buf)
+  return vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1]
+end
+
+M.lines = function (buf)
+  return vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+end
+
+M.set_lines = function (buf, lines)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+end
+
 M.zz = function (buf)
   local cmd = normal 'zz'
   vim.api.nvim_buf_call(buf, cmd)
