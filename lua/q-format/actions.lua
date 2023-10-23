@@ -9,7 +9,7 @@ local normal = function (keys)
 end
 
 M.contents = function (buf)
-  return vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1]
+  return table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), '\n')
 end
 
 M.lines = function (buf)
