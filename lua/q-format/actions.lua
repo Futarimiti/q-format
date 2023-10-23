@@ -14,7 +14,9 @@ M.zz = function (buf)
 end
 
 M.update = function (buf)
-  local cmd = normal 'update'
+  local cmd = function ()
+    vim.api.nvim_cmd({ cmd = 'update', mods = { silent = true } }, {})
+  end
   local successful, errmsg = pcall(vim.api.nvim_buf_call, buf, cmd)
   if not successful then
     error('[q-format] Cannot write buffer ' .. tostring(buf) .. ': ' .. errmsg)
