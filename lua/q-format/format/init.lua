@@ -16,12 +16,11 @@ M.format = function (user, win)
   local on_failure = function (msg)
     vim.notify('[q-format] format error:\n' .. msg, vim.log.levels.ERROR)
   end
-  local after = function ()
-    a.loadview(buf)
-  end
+  local after = function () end
 
-  a.mkview(buf)
-  f.format(user, buf, on_success, on_failure, after)
+  a.unchanging_view(buf, function ()
+    f.format(user, buf, on_success, on_failure, after)
+  end)
 end
 
 return M
