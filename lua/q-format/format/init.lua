@@ -9,7 +9,7 @@ M.format = function (user, win)
   local buf = vim.api.nvim_win_get_buf(win)
 
   a.retaining_view(buf, function ()
-    f.format(user, buf, user.on_success, user.on_failure)
+    f.format(user, buf)
   end)
 
   user.after(buf)

@@ -97,11 +97,9 @@ local select_formatter = function (user, buf)
 end
 
 -- format the buffer with according to user preferences, cps
----@param on_failure fun(buf: integer, msg: string)
----@param on_success fun(buf: integer)
-M.format = function (user, buf, on_success, on_failure)
+M.format = function (user, buf)
   local formatter = select_formatter(user, buf)
-  formatter(user, buf, on_success, on_failure)
+  formatter(user, buf, user.on_success, user.on_failure)
 end
 
 return M
