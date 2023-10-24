@@ -41,15 +41,16 @@ M.update = function (buf)
   local cmd = function ()
     vim.api.nvim_cmd({ cmd = 'write', mods = { silent = true } }, {})
   end
-  vim.api.nvim_buf_call(buf, cmd)
-  -- local successful, errmsg = pcall(vim.api.nvim_buf_call, buf, cmd)
-  -- if not successful then
-  --   error('[q-format] Cannot write buffer ' .. tostring(buf) .. ': ' .. errmsg)
-  -- end
+  local successful, errmsg = pcall(vim.api.nvim_buf_call, buf, cmd)
+  if not successful then
+    error('[q-format] Cannot write buffer ' .. tostring(buf) .. ': ' .. errmsg)
+  end
 end
 
 -- normal! gq for the whole buffer
--- NOTE: cursor position will be changed
+-- NOTE: cursor will be moved to top of buffer DURING formatting
+-- NOTE: hence do expect transient cut screen when using external formatters
+-- NOTE: use M.format_external for better experience
 M.gq = function (buf)
   local cmd = normal 'gggqG'
   vim.api.nvim_buf_call(buf, cmd)
@@ -57,8 +58,8 @@ end
 
 -- format the whole buffer using external formatter
 -- formatter should be in style of formatprg
--- NOTE: cursor position will be changed
-M.format = function (buf, formatter)
+-- NOTE: cursor will be moved to top of buffer after formatting
+M.format_external = function (buf, formatter)
   local cmd = function ()
     vim.cmd('%!' .. formatter)
   end
@@ -66,6 +67,7 @@ M.format = function (buf, formatter)
 end
 
 -- normal! = for the whole buffer
+-- NOTE: cursor will be moved to top of buffer after formatting
 M.eq = function (buf)
   local cmd = normal 'gg=G'
   vim.api.nvim_buf_call(buf, cmd)
