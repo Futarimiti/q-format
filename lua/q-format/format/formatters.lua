@@ -7,13 +7,13 @@ local M = {}
 local a = require 'q-format.actions'
 local formatters = require 'q-format.formatters'
 
-local equalprg = function (_user, buf, on_success, _, after)
+local equalprg = function (_, buf, on_success, _, after)
   a.eq(buf)
   on_success()
   after()
 end
 
-local formatexpr = function (_user, buf, on_success, _, after)
+local formatexpr = function (_, buf, on_success, _, after)
   assert(vim.api.nvim_buf_get_option(buf, 'formatexpr'), 'no formatexpr set')
   a.gq(buf)
   on_success()
@@ -23,7 +23,7 @@ end
 ---@param on_failure fun(msg: string)
 ---@param on_success fun()
 ---@param after fun()
-local formatprg = function (_user, buf, on_success, on_failure, after)
+local formatprg = function (_, buf, on_success, on_failure, after)
   assert(vim.api.nvim_buf_get_option(buf, 'formatprg') ~= '', 'no formatprg set')
 
   local fex = vim.api.nvim_buf_get_option(buf, 'formatexpr')
