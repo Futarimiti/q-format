@@ -9,13 +9,13 @@ local formatters = require 'q-format.formatters'
 
 local equalprg = function (_, buf, on_success, _)
   a.eq(buf)
-  on_success()
+  on_success(buf)
 end
 
 local formatexpr = function (_, buf, on_success, _)
   assert(vim.api.nvim_buf_get_option(buf, 'formatexpr') ~= '', 'no formatexpr set')
   a.gq(buf)
-  on_success()
+  on_success(buf)
 end
 
 local format_with_formatter = function (_, buf, on_success, on_failure, formatter)
@@ -27,9 +27,9 @@ local format_with_formatter = function (_, buf, on_success, on_failure, formatte
     -- thank you, builtin formatter
     local msg = a.contents(buf)
     a.set_lines(buf, backup)
-    on_failure(msg)
+    on_failure(buf, msg)
   else
-    on_success()
+    on_success(buf)
   end
 
 end
@@ -47,8 +47,8 @@ local custom = function (user, buf, on_success, on_failure)
 end
 
 -- a special formatter that does... nothing
-local as_is = function (_, _, on_success, _)
-  on_success()
+local as_is = function (_, buf, on_success, _)
+  on_success(buf)
 end
 
 local show = function (formatter)
@@ -96,9 +96,9 @@ local select_formatter = function (user, buf)
   return as_is
 end
 
--- format the buffer with according to user preferences
----@param on_failure fun(msg: string)
----@param on_success fun()
+-- format the buffer with according to user preferences, cps
+---@param on_failure fun(buf: integer, msg: string)
+---@param on_success fun(buf: integer)
 M.format = function (user, buf, on_success, on_failure)
   local formatter = select_formatter(user, buf)
   formatter(user, buf, on_success, on_failure)
