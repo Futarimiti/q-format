@@ -73,11 +73,8 @@ local show = function (formatter)
   end
 end
 
--- format the buffer with according to user preferences
-M.format = function (user, buf, on_success, on_failure, after)
-  local notify = function (...)
-    if user.verbose then vim.notify(...) end
-  end
+local select_formatter = function (user, buf)
+  local notify = function (...) if user.verbose then vim.notify(...) end end
 
   local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
   local preferences = user.preferences[ft] or user.preferences['*']
@@ -85,33 +82,34 @@ M.format = function (user, buf, on_success, on_failure, after)
   notify('[q-format] formatter preferences for ' .. ft .. ': ' .. vim.inspect(vim.tbl_map(show, preferences)))
 
   if vim.tbl_isempty(preferences) then
-    notify('[q-format] no formatter preference set for ' .. ft .. ', using as-is')
-    as_is(user)
-    return
+    notify('[q-format] no formatter preference set for ' .. ft .. ', no format')
+    return as_is
   end
 
   for _, formatter in ipairs(preferences) do
     if formatter == formatters.CUSTOM and user.custom[ft] then
       notify('[q-format] using custom formatter for ' .. ft)
-      custom(user, buf, on_success, on_failure, after)
-      return
+      return custom
     elseif formatter == formatters.EQUALPRG then
       notify('[q-format] using equalprg for ' .. ft)
-      equalprg(user, buf, on_success, on_failure, after)
-      return
+      return equalprg
     elseif formatter == formatters.FORMATPRG and vim.filetype.get_option(ft, 'formatprg') ~= '' then
       notify('[q-format] using formatprg for ' .. ft)
-      formatprg(user, buf, on_success, on_failure, after)
-      return
+      return formatprg
     elseif formatter == formatters.FORMATEXPR and vim.filetype.get_option(ft, 'formatexpr') ~= '' then
       notify('[q-format] using formatexpr for ' .. ft)
-      formatexpr(user, buf, on_success, on_failure, after)
-      return
+      return formatexpr
     end
   end
 
   notify('[q-format] none of the formatters found for ' .. ft)
-  as_is(user, buf, on_success, on_failure, after)
+  return as_is
+end
+
+-- format the buffer with according to user preferences
+M.format = function (user, buf, on_success, on_failure, after)
+  local formatter = select_formatter(user, buf)
+  formatter(user, buf, on_success, on_failure, after)
 end
 
 return M
