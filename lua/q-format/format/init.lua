@@ -18,7 +18,7 @@ M.format = function (user, win)
   end
   local after = function () end
 
-  a.unchanging_view(buf, function ()
+  a.retaining_view(buf, function ()
     f.format(user, buf, on_success, on_failure, after)
   end)
 

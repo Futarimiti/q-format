@@ -2,7 +2,7 @@
 
 local M = {}
 
-M.unchanging_view = function (buf, f)
+M.retaining_view = function (buf, f)
   vim.api.nvim_buf_call(buf, function ()
     local tempname = vim.fn.tempname()
     vim.cmd('silent mkview ' .. tempname)

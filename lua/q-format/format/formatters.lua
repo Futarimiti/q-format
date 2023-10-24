@@ -23,7 +23,7 @@ end
 local format_with_formatter = function (_, buf, on_success, on_failure, after, formatter)
   local backup = a.lines(buf)
 
-  a.format(buf, formatter)
+  a.format_external(buf, formatter)
   if vim.v.shell_error ~= 0 then
     -- what's currently on the buffer will be the error msg
     -- thank you, builtin formatter
