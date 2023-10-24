@@ -7,20 +7,18 @@ local M = {}
 local a = require 'q-format.actions'
 local formatters = require 'q-format.formatters'
 
-local equalprg = function (_, buf, on_success, _, after)
+local equalprg = function (_, buf, on_success, _)
   a.eq(buf)
   on_success()
-  after()
 end
 
-local formatexpr = function (_, buf, on_success, _, after)
+local formatexpr = function (_, buf, on_success, _)
   assert(vim.api.nvim_buf_get_option(buf, 'formatexpr') ~= '', 'no formatexpr set')
   a.gq(buf)
   on_success()
-  after()
 end
 
-local format_with_formatter = function (_, buf, on_success, on_failure, after, formatter)
+local format_with_formatter = function (_, buf, on_success, on_failure, formatter)
   local backup = a.lines(buf)
 
   a.format_external(buf, formatter)
@@ -34,31 +32,27 @@ local format_with_formatter = function (_, buf, on_success, on_failure, after, f
     on_success()
   end
 
-  after()
 end
 
 ---@param on_failure fun(msg: string)
 ---@param on_success fun()
----@param after fun()
-local formatprg = function (user, buf, on_success, on_failure, after)
+local formatprg = function (user, buf, on_success, on_failure)
   local fp = vim.api.nvim_buf_get_option(buf, 'formatprg')
   assert(fp ~= '', 'no formatprg set')
-  format_with_formatter(user, buf, on_success, on_failure, after, fp)
+  format_with_formatter(user, buf, on_success, on_failure, fp)
 end
 
 ---@param on_failure fun(msg: string)
 ---@param on_success fun()
----@param after fun()
-local custom = function (user, buf, on_success, on_failure, after)
+local custom = function (user, buf, on_success, on_failure)
   local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
   local custom_fp = assert(user.custom[ft], 'custom formatter not found for ' .. ft)
-  format_with_formatter(user, buf, on_success, on_failure, after, custom_fp)
+  format_with_formatter(user, buf, on_success, on_failure, custom_fp)
 end
 
 -- a special formatter that does... nothing
-local as_is = function (_, _, on_success, _, after)
+local as_is = function (_, _, on_success, _)
   on_success()
-  after()
 end
 
 local show = function (formatter)
@@ -107,9 +101,9 @@ local select_formatter = function (user, buf)
 end
 
 -- format the buffer with according to user preferences
-M.format = function (user, buf, on_success, on_failure, after)
+M.format = function (user, buf, on_success, on_failure)
   local formatter = select_formatter(user, buf)
-  formatter(user, buf, on_success, on_failure, after)
+  formatter(user, buf, on_success, on_failure)
 end
 
 return M

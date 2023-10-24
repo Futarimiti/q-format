@@ -16,10 +16,9 @@ M.format = function (user, win)
   local on_failure = function (msg)
     vim.notify('[q-format] format error:\n' .. msg, vim.log.levels.ERROR)
   end
-  local after = function () end
 
   a.retaining_view(buf, function ()
-    f.format(user, buf, on_success, on_failure, after)
+    f.format(user, buf, on_success, on_failure)
   end)
 
   if user.centre then a.zz(buf) end
