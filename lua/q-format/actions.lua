@@ -14,27 +14,6 @@ M.unchanging_view = function (buf, f)
   end)
 end
 
----@deprecated use M.unchanging_view
-M.mkview = function (buf)
-  local cmd = function ()
-    -- mkview 1 because some plugins auto save view when write
-    -- since user may want to write on successful formatting, we save view to 1
-    -- it is still flawed as 1 may still be overwritten by other plugins
-    vim.api.nvim_cmd({ cmd = 'mkview', args = { '1' }, bang = true, mods = { silent = true } }, {})
-  end
-  local successful, errmsg = pcall(vim.api.nvim_buf_call, buf, cmd)
-  if not successful then
-    error('[q-format] Cannot make view for buffer ' .. tostring(buf) .. ': ' .. errmsg)
-  end
-end
-
----@deprecated use M.unchanging_view
-M.loadview = function (buf)
-  vim.api.nvim_buf_call(buf, function ()
-    vim.api.nvim_cmd({ cmd = 'loadview', args = { '1' }, mods = { emsg_silent = true } }, {})
-  end)
-end
-
 local normal = function (keys)
   return function ()
     vim.api.nvim_cmd({ cmd = 'normal', args = { keys }, bang = true, mods = { silent = true } }, {})
