@@ -2,6 +2,18 @@
 
 local M = {}
 
+local silent = function (cmd)
+  vim.api.nvim_cmd({ cmd = cmd, mods = { silent = true } }, {})
+end
+
+M.mkview = function (buf)
+  vim.api.nvim_buf_call(buf, function () silent 'mkview' end)
+end
+
+M.loadview = function (buf)
+  vim.api.nvim_buf_call(buf, function () silent 'loadview' end)
+end
+
 local normal = function (keys)
   return function ()
     vim.api.nvim_cmd({ cmd = 'normal', args = { keys }, bang = true, mods = { silent = true } }, {})
