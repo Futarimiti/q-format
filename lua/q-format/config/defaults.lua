@@ -5,6 +5,7 @@ local typecheck = function (config)
   , preferences = { config.preferences, 'table' }
   , ['preferences.*'] = { config.preferences['*'], 'table' }
   , verbose = { config.verbose, 'boolean' }
+  , centre = { config.centre, 'boolean' }
   }
 end
 
@@ -14,6 +15,7 @@ local defaults =
 { custom = {}  -- custom formatters, in the format that you would pass to formatprg
 , preferences = { ['*'] = { e.CUSTOM, e.FORMATEXPR, e.FORMATPRG } }  -- preferences of formatters for each filetype
 , verbose = false
+, centre = false  -- zz to centre at cursor pos after formatting?
 }
 
 assert(pcall(typecheck, defaults))

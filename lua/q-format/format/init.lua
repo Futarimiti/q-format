@@ -21,6 +21,8 @@ M.format = function (user, win)
   a.unchanging_view(buf, function ()
     f.format(user, buf, on_success, on_failure, after)
   end)
+
+  if user.centre then a.zz(buf) end
 end
 
 return M
