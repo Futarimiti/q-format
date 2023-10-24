@@ -14,7 +14,7 @@ local equalprg = function (_, buf, on_success, _, after)
 end
 
 local formatexpr = function (_, buf, on_success, _, after)
-  assert(vim.api.nvim_buf_get_option(buf, 'formatexpr'), 'no formatexpr set')
+  assert(vim.api.nvim_buf_get_option(buf, 'formatexpr') ~= '', 'no formatexpr set')
   a.gq(buf)
   on_success()
   after()
