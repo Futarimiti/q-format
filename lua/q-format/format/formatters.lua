@@ -20,18 +20,10 @@ local formatexpr = function (_, buf, on_success, _, after)
   after()
 end
 
----@param on_failure fun(msg: string)
----@param on_success fun()
----@param after fun()
-local formatprg = function (_, buf, on_success, on_failure, after)
-  assert(vim.api.nvim_buf_get_option(buf, 'formatprg') ~= '', 'no formatprg set')
-
-  local fex = vim.api.nvim_buf_get_option(buf, 'formatexpr')
-  vim.api.nvim_buf_set_option(buf, 'formatexpr', '')
-
+local format_with_formatter = function (_, buf, on_success, on_failure, after, formatter)
   local backup = a.lines(buf)
 
-  a.gq(buf)
+  a.format(buf, formatter)
   if vim.v.shell_error ~= 0 then
     -- what's currently on the buffer will be the error msg
     -- thank you, builtin formatter
@@ -43,8 +35,15 @@ local formatprg = function (_, buf, on_success, on_failure, after)
   end
 
   after()
+end
 
-  vim.api.nvim_buf_set_option(buf, 'formatexpr', fex)
+---@param on_failure fun(msg: string)
+---@param on_success fun()
+---@param after fun()
+local formatprg = function (user, buf, on_success, on_failure, after)
+  local fp = vim.api.nvim_buf_get_option(buf, 'formatprg')
+  assert(fp ~= '', 'no formatprg set')
+  format_with_formatter(user, buf, on_success, on_failure, after, fp)
 end
 
 ---@param on_failure fun(msg: string)
@@ -53,10 +52,7 @@ end
 local custom = function (user, buf, on_success, on_failure, after)
   local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
   local custom_fp = assert(user.custom[ft], 'custom formatter not found for ' .. ft)
-  local fp = vim.api.nvim_buf_get_option(buf, 'formatprg')
-  vim.api.nvim_buf_set_option(buf, 'formatprg', custom_fp)
-  formatprg(user, buf, on_success, on_failure, after)
-  vim.api.nvim_buf_set_option(buf, 'formatprg', fp)
+  format_with_formatter(user, buf, on_success, on_failure, after, custom_fp)
 end
 
 -- a special formatter that does... nothing
@@ -77,14 +73,8 @@ local show = function (formatter)
   end
 end
 
-    -- ({ [formatters.CUSTOM] = function () custom(user, buf, on_success, on_failure, after) end
-    --  , [formatters.EQUALPRG] = function () equalprg(user, buf) end
-    --  , [formatters.FORMATPRG] = function () formatprg(user, buf, on_success, on_failure, after) end
-    --  , [formatters.FORMATEXPR] = function () formatexpr(user, buf) end
-    --  })[f]()
--- read user config for formatter preference
--- then use the appropriate formatter
-M.corres_format = function (user, buf, on_success, on_failure, after)
+-- format the buffer with according to user preferences
+M.format = function (user, buf, on_success, on_failure, after)
   local notify = function (...)
     if user.verbose then vim.notify(...) end
   end
@@ -97,6 +87,7 @@ M.corres_format = function (user, buf, on_success, on_failure, after)
   if vim.tbl_isempty(preferences) then
     notify('[q-format] no formatter preference set for ' .. ft .. ', using as-is')
     as_is(user)
+    return
   end
 
   for _, formatter in ipairs(preferences) do

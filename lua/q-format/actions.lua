@@ -2,16 +2,24 @@
 
 local M = {}
 
-local silent = function (cmd)
-  vim.api.nvim_cmd({ cmd = cmd, mods = { silent = true } }, {})
-end
-
 M.mkview = function (buf)
-  vim.api.nvim_buf_call(buf, function () silent 'mkview' end)
+  local cmd = function ()
+    -- mkview 1 because some plugins auto save view when write
+    -- since user may want to write on successful formatting, we save view to 1
+    -- it is still flawed as 1 may still be overwritten by other plugins
+    -- FIXME: find a better way to save view, eg save to a file
+    vim.api.nvim_cmd({ cmd = 'mkview', args = { '1' }, bang = true, mods = { silent = true } }, {})
+  end
+  local successful, errmsg = pcall(vim.api.nvim_buf_call, buf, cmd)
+  if not successful then
+    error('[q-format] Cannot make view for buffer ' .. tostring(buf) .. ': ' .. errmsg)
+  end
 end
 
 M.loadview = function (buf)
-  vim.api.nvim_buf_call(buf, function () silent 'loadview' end)
+  vim.api.nvim_buf_call(buf, function ()
+    vim.api.nvim_cmd({ cmd = 'loadview', args = { '1' }, mods = { emsg_silent = true } }, {})
+  end)
 end
 
 local normal = function (keys)
@@ -39,18 +47,29 @@ end
 
 M.update = function (buf)
   local cmd = function ()
-    vim.api.nvim_cmd({ cmd = 'update', mods = { silent = true } }, {})
+    vim.api.nvim_cmd({ cmd = 'write', mods = { silent = true } }, {})
   end
-  local successful, errmsg = pcall(vim.api.nvim_buf_call, buf, cmd)
-  if not successful then
-    error('[q-format] Cannot write buffer ' .. tostring(buf) .. ': ' .. errmsg)
-  end
+  vim.api.nvim_buf_call(buf, cmd)
+  -- local successful, errmsg = pcall(vim.api.nvim_buf_call, buf, cmd)
+  -- if not successful then
+  --   error('[q-format] Cannot write buffer ' .. tostring(buf) .. ': ' .. errmsg)
+  -- end
 end
 
 -- normal! gq for the whole buffer
 -- NOTE: cursor position will be changed
 M.gq = function (buf)
   local cmd = normal 'gggqG'
+  vim.api.nvim_buf_call(buf, cmd)
+end
+
+-- format the whole buffer using external formatter
+-- formatter should be in style of formatprg
+-- NOTE: cursor position will be changed
+M.format = function (buf, formatter)
+  local cmd = function ()
+    vim.cmd('%!' .. formatter)
+  end
   vim.api.nvim_buf_call(buf, cmd)
 end
 
