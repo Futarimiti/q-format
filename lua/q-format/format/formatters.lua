@@ -34,16 +34,12 @@ local format_with_formatter = function (_, buf, on_success, on_failure, formatte
 
 end
 
----@param on_failure fun(msg: string)
----@param on_success fun()
 local formatprg = function (user, buf, on_success, on_failure)
   local fp = vim.api.nvim_buf_get_option(buf, 'formatprg')
   assert(fp ~= '', 'no formatprg set')
   format_with_formatter(user, buf, on_success, on_failure, fp)
 end
 
----@param on_failure fun(msg: string)
----@param on_success fun()
 local custom = function (user, buf, on_success, on_failure)
   local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
   local custom_fp = assert(user.custom[ft], 'custom formatter not found for ' .. ft)
@@ -101,6 +97,8 @@ local select_formatter = function (user, buf)
 end
 
 -- format the buffer with according to user preferences
+---@param on_failure fun(msg: string)
+---@param on_success fun()
 M.format = function (user, buf, on_success, on_failure)
   local formatter = select_formatter(user, buf)
   formatter(user, buf, on_success, on_failure)
