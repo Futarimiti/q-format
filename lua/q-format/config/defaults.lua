@@ -5,7 +5,9 @@ local typecheck = function (config)
   , preferences = { config.preferences, 'table' }
   , ['preferences.*'] = { config.preferences['*'], 'table' }
   , verbose = { config.verbose, 'boolean' }
-  , centre = { config.centre, 'boolean' }
+  , on_success = { config.on_success, 'function' }
+  , on_failure = { config.on_failure, 'function' }
+  , after = { config.after, 'function' }
   }
 end
 
@@ -15,7 +17,9 @@ local defaults =
 { custom = {}  -- custom formatters, in the format that you would pass to formatprg
 , preferences = { ['*'] = { e.CUSTOM, e.FORMATEXPR, e.FORMATPRG } }  -- preferences of formatters for each filetype
 , verbose = false
-, centre = false  -- zz to centre at cursor pos after formatting?
+, on_success = function (_) end
+, on_failure = function (_, msg) vim.notify('[q-format] format error:\n' .. msg, vim.log.levels.ERROR) end
+, after = function (_) end
 }
 
 assert(pcall(typecheck, defaults))
