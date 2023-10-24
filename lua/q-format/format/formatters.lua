@@ -68,7 +68,7 @@ local show = function (formatter)
 end
 
 local select_formatter = function (user, buf)
-  local notify = function (...) if user.verbose then vim.notify(...) end end
+  local notify = require('q-format.logger').notify
 
   local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
   local preferences = user.preferences[ft] or user.preferences['*']
