@@ -5,10 +5,10 @@ local typecheck = function (config)
   , preferences = { config.preferences, 'table' }
   , ['preferences.*'] = { config.preferences['*'], 'table' }
   , verbose = { config.verbose, 'boolean' }
-  , on_success = { config.on_success, 'function' }
-  , on_failure = { config.on_failure, 'function' }
-  , after = { config.after, 'function' }
-  , notify_failure = { config.notify_failure, 'function' }
+  , on_success = { config.on_success, 'function' }  -- accepts: buffer handle
+  , on_failure = { config.on_failure, 'function' }  -- accepts: buffer handle
+  , after = { config.after, 'function' }  -- accepts: buffer handle
+  , notify_failure = { config.notify_failure, 'function' }  -- accepts: error message string
   }
 end
 
