@@ -98,8 +98,17 @@ end
 
 -- format the buffer with according to user preferences, cps
 M.format = function (user, buf)
+  local notify = require('q-format.logger').notify
   local formatter = select_formatter(user, buf)
-  formatter(user, buf, user.on_success, user.on_failure)
+  local on_success = function (buf_)
+    notify '[q-format] format success'
+    user.on_success(buf_)
+  end
+  local on_failure = function (buf_, msg)
+    vim.notify('[q-format] format error:\n' .. msg, vim.log.levels.ERROR)
+    user.on_failure(buf_, msg)
+  end
+  formatter(user, buf, on_success, on_failure)
 end
 
 return M
