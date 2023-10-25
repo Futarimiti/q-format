@@ -8,6 +8,7 @@ local typecheck = function (config)
   , on_success = { config.on_success, 'function' }
   , on_failure = { config.on_failure, 'function' }
   , after = { config.after, 'function' }
+  , notify_failure = { config.notify_failure, 'function' }
   }
 end
 
@@ -17,9 +18,10 @@ local defaults =
 { custom = {}  -- custom formatters, in the format that you would pass to formatprg
 , preferences = { ['*'] = { e.CUSTOM, e.FORMATEXPR, e.FORMATPRG } }  -- preferences of formatters for each filetype
 , verbose = false
-, on_success = function (_) end
-, on_failure = function (_, msg) vim.notify('[q-format] format error:\n' .. msg, vim.log.levels.ERROR) end
-, after = function (_) end
+, on_success = function (_) end  -- additional actions to take after a successful format, e.g. write buffer
+, on_failure = function (_) end  -- additional actions to take after a failed format
+, after = function (_) end  -- additional actions to take after a format, regardless of success or failure
+, notify_failure = function (msg) vim.notify('[q-format] format error:\n' .. msg, vim.log.levels.ERROR) end  -- how to announce a format failure
 }
 
 assert(pcall(typecheck, defaults))

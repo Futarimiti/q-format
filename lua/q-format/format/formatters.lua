@@ -105,8 +105,8 @@ M.format = function (user, buf)
     user.on_success(buf_)
   end
   local on_failure = function (buf_, msg)
-    vim.notify('[q-format] format error:\n' .. msg, vim.log.levels.ERROR)
-    user.on_failure(buf_, msg)
+    user.notify_failure(msg)
+    user.on_failure(buf_)
   end
   formatter(user, buf, on_success, on_failure)
 end
