@@ -5,7 +5,7 @@ local M = {}
 M.retaining_view = function (buf, f)
   vim.api.nvim_buf_call(buf, function ()
     local tempname = vim.fn.tempname()
-    vim.cmd('silent mkview ' .. tempname)
+    vim.cmd('silent mkview! ' .. tempname)
     local successful, errmsg = pcall(f)
     vim.cmd('source ' .. tempname)
     if not successful then
