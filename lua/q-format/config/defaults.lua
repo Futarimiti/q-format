@@ -22,6 +22,7 @@ local defaults =
 , on_failure = function (_) end  -- additional actions to take after a failed format
 , after = function (_) end  -- additional actions to take after a format, regardless of success or failure
 , notify_failure = function (msg) vim.notify('[q-format] format error:\n' .. msg, vim.log.levels.ERROR) end  -- how to announce a format failure; to suppress, set to a function that does nothing
+, when_no_format = function (win) vim.api.nvim_win_call(win, function () vim.cmd 'write' end) end
 }
 
 assert(pcall(typecheck, defaults))
