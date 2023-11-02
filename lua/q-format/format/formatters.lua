@@ -41,7 +41,7 @@ local formatprg = function (user, buf, on_success, on_failure)
 end
 
 local custom = function (user, buf, on_success, on_failure)
-  local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
+  local ft = vim.bo[buf].filetype
   local custom_fp = assert(user.custom[ft], 'custom formatter not found for ' .. ft)
   format_with_formatter(user, buf, on_success, on_failure, custom_fp)
 end
@@ -66,7 +66,7 @@ end
 local select_formatter = function (user, buf)
   local notify = require('q-format.logger').notify
 
-  local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
+  local ft = vim.bo[buf].filetype
   local preferences = user.preferences[ft] or user.preferences['*']
 
   notify('[q-format] formatter preferences for ' .. ft .. ': ' .. vim.inspect(vim.tbl_map(show, preferences)))
@@ -83,10 +83,10 @@ local select_formatter = function (user, buf)
     elseif formatter == formatters.EQUALPRG then
       notify('[q-format] using equalprg for ' .. ft)
       return equalprg
-    elseif formatter == formatters.FORMATPRG and vim.filetype.get_option(ft, 'formatprg') ~= '' then
+    elseif formatter == formatters.FORMATPRG and vim.bo[buf].formatprg ~= '' then
       notify('[q-format] using formatprg for ' .. ft)
       return formatprg
-    elseif formatter == formatters.FORMATEXPR and vim.filetype.get_option(ft, 'formatexpr') ~= '' then
+    elseif formatter == formatters.FORMATEXPR and vim.bo[buf].formatexpr ~= '' then
       notify('[q-format] using formatexpr for ' .. ft)
       return formatexpr
     end
