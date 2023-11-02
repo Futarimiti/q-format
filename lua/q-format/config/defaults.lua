@@ -16,7 +16,7 @@ end
 local e = require 'q-format.formatters'
 
 local defaults =
-{ custom = {}  -- custom formatters, in the format that you would pass to formatprg
+{ custom = {}  -- custom formatters as filetype-formatter pairs, in the format that you would pass to formatprg
 , preferences = { ['*'] = { e.CUSTOM, e.FORMATEXPR, e.FORMATPRG } }  -- preferences of formatters for each filetype
 , verbose = false
 , on_success = function (_) end  -- additional actions to take after a successful format, e.g. write buffer
